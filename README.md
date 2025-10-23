@@ -12,7 +12,7 @@ TROPHEUS dirancang sebagai langkah awal menuju konsep **Smart Campus ITS**, di m
 
 ---
 
-## NAMA KELOMPOK 9
+## NAMA KELOMPOK 3
 **Ahmad Rafli Al Adzani (2042231001)**  
 **Valencia Christina Setiowardhani (2042231055)**  
 **Ahmad Radhy, S.SI., M.SI (Supervisor)**  
