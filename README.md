@@ -1,53 +1,56 @@
-# 🌡️ TROPHEUS  
-**Sistem Monitoring Suhu dan Kelembaban Udara Real-Time dan Terintegrasi untuk Ruang Kelas**
+# PROJECT AKHIR TROPHEUS  
+Sistem Monitoring Suhu dan Kelembaban Udara Real-Time dan Terintegrasi untuk Ruang Kelas
 
 ---
 
-## 👨‍🏫 Supervisor  
+## Supervisor  
 **Ahmad Radhy, S.SI., M.SI**
 
 ---
 
-## 👥 Anggota Kelompok  
-- **Ahmad Rafli Al Adzani** — 2042231001  
-- **Valencia Christina Setiowardhani** — 2042231055  
+## Anggota Kelompok  
+1. Ahmad Rafli Al Adzani — 2042231001  
+2. Valencia Christina Setiowardhani — 2042231055  
 
 Program Studi D4 Teknologi Rekayasa Instrumentasi  
 Departemen Teknik Instrumentasi  
-Fakultas Vokasi — Institut Teknologi Sepuluh Nopember (ITS)  
-2025  
+Fakultas Vokasi  
+Institut Teknologi Sepuluh Nopember (ITS)  
+Tahun 2025
 
 ---
 
-## 📘 Deskripsi Proyek  
-**TROPHEUS** adalah sistem **Internet of Things (IoT)** berbasis **ESP32-S3** dan **sensor DHT22** yang dirancang untuk memantau suhu dan kelembaban udara secara **real-time** di ruang kelas Tower 3 ITS.  
-Sistem ini mengirimkan data ke **ThingsBoard Cloud** melalui **protokol MQTT**, lalu menampilkannya pada dashboard interaktif berbasis web.
+## Deskripsi Proyek  
+TROPHEUS merupakan sistem Internet of Things (IoT) berbasis mikrokontroler ESP32-S3 dan sensor DHT22 yang digunakan untuk memantau suhu dan kelembaban udara di ruang kelas Tower 3 ITS secara real-time.  
+Sistem ini mengirimkan data melalui protokol MQTT ke platform ThingsBoard Cloud untuk divisualisasikan pada dashboard pemantauan berbasis web.  
+Tujuan dari pengembangan sistem ini adalah untuk mendukung kenyamanan termal ruang belajar di Fakultas Vokasi ITS melalui pemantauan suhu dan kelembapan yang terintegrasi.
 
 ---
 
-## 🧠 Latar Belakang  
-Kenyamanan termal berperan penting terhadap fokus dan produktivitas mahasiswa.  
-Menurut **ANSI/ASHRAE 55-2023**, suhu nyaman untuk aktivitas belajar berada di rentang **20°C–24°C**, sedangkan **kelembapan ideal** menurut **Permenkes RI No.1077/2011** adalah **40%–60% RH**.  
-Melalui sistem **TROPHEUS**, kondisi suhu dan kelembapan ruang kelas dapat dipantau secara kontinu dan akurat guna mendukung kenyamanan belajar di lingkungan Fakultas Vokasi ITS.
+## Latar Belakang  
+Kenyamanan termal memiliki pengaruh signifikan terhadap fokus dan produktivitas mahasiswa dalam kegiatan belajar mengajar. Berdasarkan standar **ANSI/ASHRAE 55-2023**, suhu nyaman bagi manusia di ruang indoor berkisar antara 20°C hingga 24°C, sedangkan menurut **Permenkes RI No.1077/Menkes/Per/V/2011**, kelembaban udara yang ideal berada pada rentang 40% hingga 60%.  
+Untuk memastikan kondisi ruang kelas tetap dalam batas kenyamanan tersebut, diperlukan sistem pemantauan yang mampu membaca dan mengirimkan data suhu serta kelembapan udara secara aktual dan berkelanjutan.  
+TROPHEUS dikembangkan sebagai solusi monitoring berbasis IoT yang sederhana, efisien, dan dapat diakses secara daring melalui platform ThingsBoard.
 
 ---
 
-## 🎯 Tujuan  
-- Merancang dan mengimplementasikan **sistem monitoring suhu dan kelembapan** berbasis IoT.  
-- Menampilkan data sensor secara **real-time** pada dashboard ThingsBoard Cloud.  
-- Menyediakan data termal ruang kelas untuk evaluasi dan pengembangan **Smart Campus System**.
+## Tujuan  
+1. Merancang sistem monitoring suhu dan kelembapan udara berbasis IoT menggunakan ESP32-S3 dan sensor DHT22.  
+2. Mengimplementasikan komunikasi data menggunakan protokol MQTT ke ThingsBoard Cloud.  
+3. Menampilkan data suhu dan kelembapan secara real-time pada dashboard pemantauan.  
+4. Memberikan dasar bagi pengembangan konsep smart campus pada Fakultas Vokasi ITS.
 
 ---
 
-## 🧩 Komponen Utama  
+## Komponen Sistem  
 | Komponen | Fungsi |
 |-----------|---------|
-| **ESP32-S3** | Mikrokontroler utama dengan Wi-Fi dan BLE untuk konektivitas IoT |
-| **DHT22 (AM2302)** | Sensor suhu dan kelembapan digital dengan akurasi tinggi |
-| **ThingsBoard Cloud** | Platform visualisasi data berbasis MQTT |
-| **MQTT Protocol** | Protokol komunikasi ringan untuk pengiriman data sensor |
-| **GNU Plot** | Analisis hasil pengujian data selama periode monitoring |
+| ESP32-S3 | Mikrokontroler utama yang membaca data sensor dan mengirimkannya ke cloud |
+| DHT22 | Sensor digital untuk mengukur suhu dan kelembapan udara |
+| ThingsBoard Cloud | Platform berbasis cloud untuk visualisasi data dan pemantauan real-time |
+| Protokol MQTT | Jalur komunikasi antara mikrokontroler dan server cloud |
+| GNU Plot | Alat bantu untuk analisis hasil pengujian data sistem |
 
 ---
 
-## ⚙️ Arsitektur Sistem  
+## Arsitektur Sistem  
