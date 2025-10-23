@@ -110,6 +110,10 @@ Bagian ini berisi **kode lengkap firmware Rust untuk ESP32-S3** serta **script G
 
 ---
 
+## 🐙 SHOW UP RESULT  GNU PLOT
+<img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/837b1afa-e202-4e3c-a498-e71e20442929" />
+---
+
 ### 💻 Kode Program ESP32-S3 (Rust)
 
 ```rust
@@ -308,10 +312,6 @@ plot "data.csv" using 1:2 with lines title "Suhu (°C)" lc rgb "red", \
      "data.csv" using 1:3 with lines title "Kelembapan (%)" lc rgb "blue"
 
 ---
-
-## 💻 SHOW UP RESULT  GNU PLOT + MQTT OTA
-<img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/837b1afa-e202-4e3c-a498-e71e20442929" />
-<img width="575" height="309" alt="image" src="https://github.com/user-attachments/assets/a3ed9db2-0e4b-445a-8048-dd2e2fc3bc12" />
 
 
 
