@@ -29,7 +29,8 @@ Kenyamanan termal ruangan berpengaruh langsung terhadap produktivitas dan fokus 
 
 TROPHEUS hadir sebagai solusi monitoring kondisi lingkungan ruang kelas menggunakan sensor dan cloud platform, sehingga data suhu dan kelembapan dapat dipantau secara real-time dan menjadi dasar pengelolaan kenyamanan ruang belajar.
 
-![Gambar 1.1 - Desain Tower 3 ITS](images/desain_tower3.png)
+<img width="580" height="325" alt="image" src="https://github.com/user-attachments/assets/12e0f37b-a5f0-4d0a-a93a-7cda70fcec7c" />
+
 
 ---
 
@@ -60,7 +61,8 @@ TROPHEUS hadir sebagai solusi monitoring kondisi lingkungan ruang kelas mengguna
 
 ## 🧩 Arsitektur Sistem
 
-![Gambar 3.1 - Arsitektur TROPHEUS](images/arsitektur.png)
+<img width="541" height="159" alt="image" src="https://github.com/user-attachments/assets/ccaa62d4-817c-4ea9-b962-e501df46e21b" />
+
 
 ESP32-S3 membaca data dari sensor DHT22 melalui GPIO, memvalidasi hasilnya, dan mengirimkan data ke ThingsBoard Cloud menggunakan MQTT.  
 Sistem bersifat **open-loop**, hanya melakukan pemantauan tanpa pengendalian otomatis.
@@ -69,7 +71,8 @@ Sistem bersifat **open-loop**, hanya melakukan pemantauan tanpa pengendalian oto
 
 ## 🔄 Flowchart Sistem
 
-![Gambar 3.2 - Flowchart Sistem](images/flowchart.png)
+<img width="268" height="772" alt="image" src="https://github.com/user-attachments/assets/879c65ba-e13f-4e7b-bc01-e4e5e73c307c" />
+
 
 Alur sistem TROPHEUS:
 1. **Inisialisasi** – Sistem mengaktifkan WiFi dan mempersiapkan koneksi MQTT.  
@@ -82,7 +85,8 @@ Alur sistem TROPHEUS:
 
 ## ⚡ Wiring Diagram
 
-![Gambar 3.3 - Wiring ESP32-S3 ke DHT22](images/wiring.png)
+<img width="531" height="113" alt="image" src="https://github.com/user-attachments/assets/c14a1a62-7ff5-4d82-bee9-f51912feeed1" />
+
 
 | Komponen | Pin ESP32-S3 | Keterangan |
 |-----------|---------------|------------|
