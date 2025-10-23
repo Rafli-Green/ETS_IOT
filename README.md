@@ -96,6 +96,13 @@ Alur sistem TROPHEUS:
 
 ---
 
+---
+
+## 💻 SHOW UP DATA  GNU PLOT + MQTT OTA
+<img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/837b1afa-e202-4e3c-a498-e71e20442929" />
+
+---
+
 ## 💻 Pengujian Sistem
 
 Flashing firmware Rust ke ESP32-S3:
