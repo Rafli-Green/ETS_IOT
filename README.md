@@ -106,3 +106,153 @@ Firmware dikembangkan menggunakan **C/C++ (Arduino Framework)** dan mengatur:
 Sistem **TROPHEUS** dirancang dengan arsitektur **open-loop**, di mana perangkat hanya melakukan pengukuran dan pengiriman data tanpa umpan balik otomatis terhadap lingkungan.  
 
 **Diagram Alur Kerja Sistem:**  
+         🌡️ DHT22 Sensor
+                 ↓
+          ⚙️ ESP32-S3 Board
+                 ↓
+         📡 MQTT Broker Server
+                 ↓
+    ☁️ ThingsBoard Cloud Dashboard
+
+
+---
+
+## 💻 **Kode Program ESP32-S3 (DHT22 + MQTT + OTA)**
+
+```cpp
+// ================================================================
+// TROPHEUS: ESP32-S3 + DHT22 + MQTT + ThingsBoard Cloud
+// ================================================================
+
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <DHT.h>
+#include <ArduinoJson.h>
+#include <HTTPClient.h>
+#include <HTTPUpdate.h>
+#include <ArduinoOTA.h>
+
+// ---------- Konfigurasi Wi-Fi & ThingsBoard ----------
+const char* WIFI_SSID = "Nama_WiFi";
+const char* WIFI_PASS = "Password_WiFi";
+const char* THINGSBOARD_SERVER = "demo.thingsboard.io";
+const int   THINGSBOARD_PORT = 1883;
+const char* ACCESS_TOKEN = "Token_Device_ThingsBoard";
+
+// ---------- Konfigurasi Sensor DHT22 ----------
+#define DHTPIN 4
+#define DHTTYPE DHT22
+DHT dht(DHTPIN, DHTTYPE);
+
+// ---------- Variabel Global ----------
+WiFiClient espClient;
+PubSubClient mqttClient(espClient);
+unsigned long lastSend = 0;
+const unsigned long interval = 10000; // kirim tiap 10 detik
+
+// ---------- Informasi Firmware ----------
+const char* FIRMWARE_NAME = "TROPHEUS-ESP32S3";
+const char* FIRMWARE_VERSION = "1.0.0";
+
+// ---------- Inisialisasi Wi-Fi ----------
+void setupWiFi() {
+  Serial.printf("Menghubungkan ke Wi-Fi: %s\n", WIFI_SSID);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.printf("\nTerhubung! IP Address: %s\n", WiFi.localIP().toString().c_str());
+}
+
+// ---------- Callback MQTT ----------
+void callback(char* topic, byte* payload, unsigned int length) {
+  String data;
+  for (unsigned int i = 0; i < length; i++) data += (char)payload[i];
+  Serial.printf("Pesan diterima [%s]: %s\n", topic, data.c_str());
+
+  if (String(topic).startsWith("v1/devices/me/rpc/request/")) {
+    StaticJsonDocument<512> doc;
+    if (deserializeJson(doc, data)) return;
+    const char* method = doc["method"];
+    if (method && String(method) == "ota_update") {
+      const char* url = doc["params"]["url"];
+      if (url && strlen(url) > 0) {
+        Serial.printf("Menjalankan OTA dari URL: %s\n", url);
+        t_httpUpdate_return ret = httpUpdate.update(espClient, url);
+        switch (ret) {
+          case HTTP_UPDATE_FAILED:
+            Serial.println("Gagal melakukan OTA."); break;
+          case HTTP_UPDATE_NO_UPDATES:
+            Serial.println("Tidak ada pembaruan baru."); break;
+          case HTTP_UPDATE_OK:
+            Serial.println("Pembaruan berhasil, sistem akan restart."); break;
+        }
+      }
+    }
+  }
+}
+
+// ---------- Koneksi ke MQTT ----------
+void reconnectMQTT() {
+  while (!mqttClient.connected()) {
+    Serial.print("Menghubungkan ke MQTT...");
+    if (mqttClient.connect("TROPHEUS_Client", ACCESS_TOKEN, NULL)) {
+      Serial.println("Terhubung ke broker MQTT.");
+      mqttClient.subscribe("v1/devices/me/rpc/request/+");
+    } else {
+      Serial.printf("Gagal (rc=%d), coba lagi dalam 5 detik.\n", mqttClient.state());
+      delay(5000);
+    }
+  }
+}
+
+// ---------- Publish Telemetri ----------
+void publishTelemetry(float temp, float hum) {
+  StaticJsonDocument<128> doc;
+  doc["temperature"] = temp;
+  doc["humidity"] = hum;
+  char buffer[128];
+  size_t n = serializeJson(doc, buffer);
+  mqttClient.publish("v1/devices/me/telemetry", buffer, n);
+  Serial.printf("Data terkirim -> Suhu: %.2f°C | Kelembapan: %.2f%%\n", temp, hum);
+}
+
+// ---------- Setup ----------
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  dht.begin();
+  setupWiFi();
+
+  mqttClient.setServer(THINGSBOARD_SERVER, THINGSBOARD_PORT);
+  mqttClient.setCallback(callback);
+
+  ArduinoOTA.setHostname("TROPHEUS-ESP32S3");
+  ArduinoOTA.begin();
+  Serial.println("Sistem siap.");
+}
+
+// ---------- Loop ----------
+void loop() {
+  ArduinoOTA.handle();
+
+  if (WiFi.status() != WL_CONNECTED) setupWiFi();
+  if (!mqttClient.connected()) reconnectMQTT();
+
+  mqttClient.loop();
+
+  unsigned long now = millis();
+  if (now - lastSend > interval) {
+    lastSend = now;
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
+    if (isnan(h) || isnan(t)) {
+      Serial.println("Gagal membaca sensor DHT22!");
+      return;
+    }
+    publishTelemetry(t, h);
+  }
+}
+
