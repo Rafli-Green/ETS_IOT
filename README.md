@@ -95,6 +95,8 @@ Alur sistem TROPHEUS:
 | DHT22 (+) | 3.3V | Sumber daya |
 
 ---
+### 🐙 SHOW UP RESULT  GNU PLOT
+<img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/837b1afa-e202-4e3c-a498-e71e20442929" />
 
 ---
 
@@ -108,10 +110,6 @@ espflash flash --partition-table partitions.csv target/xtensa-esp32s3-espidf/deb
 
 Bagian ini berisi **kode lengkap firmware Rust untuk ESP32-S3** serta **script GNUPlot** yang digunakan untuk menampilkan hasil pengujian data suhu dan kelembapan.
 
----
-
-## 🐙 SHOW UP RESULT  GNU PLOT
-<img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/837b1afa-e202-4e3c-a498-e71e20442929" />
 ---
 
 ### 💻 Kode Program ESP32-S3 (Rust)
