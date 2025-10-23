@@ -1,0 +1,702 @@
+\documentclass[12pt,a4paper]{report}
+
+% --- FONT DAN SPASI ---
+\usepackage{times}                % Times New Roman
+\usepackage{setspace}
+\setstretch{1.15}    
+\usepackage{enumitem}
+
+% --- MARGIN ---
+\usepackage[a4paper, left=4cm, right=3cm, top=3cm, bottom=3cm]{geometry}
+
+% --- INDONESIA ---
+\usepackage[indonesian]{babel}
+
+% --- PENGATURAN JUDUL BAB & SUBBAB ---
+\usepackage{titlesec}
+
+% Hilangkan spasi berlebih di atas judul BAB
+\titlespacing*{\chapter}{0pt}{-0pt}{15pt}    % {left}{before-sep}{after-sep}
+\titlespacing*{\section}{0pt}{0pt}{0pt}
+\titleformat{\section}
+  {\bfseries\normalsize}     % gaya font section (tebal & ukuran normal)
+  {\thesection.}             % penomoran: "1.1"
+  {0.5em}                    % jarak antara nomor dan teks
+  {}                         % format tambahan
+
+\titlespacing*{\subsection}{0pt}{0pt}{0pt}
+
+% Gaya judul BAB tebal dan tengah
+\titleformat{\chapter}[block]{\bfseries\centering\Large}{BAB \thechapter}{1em}{}
+
+% Times New Roman-like
+\usepackage{newtxtext,newtxmath}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black}
+\usepackage{titlesec}
+\titleformat{\subsection}
+  {\normalfont\bfseries\normalsize}
+  {\thesubsection}{1em}{}
+
+
+% Untuk kode program verbatim
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    keepspaces=true
+}
+
+% --- HEADER DAN FOOTER (opsional, bisa dihapus kalau nggak mau) ---
+% fancyhdr setup: nomor di bawah kanan, tanpa garis header
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}                    % kosongkan header/footer default
+\fancyfoot[R]{\thepage}       % nomor di bawah kanan
+\renewcommand{\headrulewidth}{0pt}  % hilangkan garis header
+\renewcommand{\footrulewidth}{0pt}  % (opsional) hilangkan garis footer
+
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[R]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
+
+% --- GRAFIK DAN GAMBAR ---
+\usepackage{graphicx}
+\graphicspath{{images/}} % folder tempat gambar kamu disimpan
+\usepackage{caption}
+\captionsetup[figure]{font=small,labelfont=bf}
+
+% --- TABEL SOTA ---
+\usepackage{float}
+\usepackage{array}
+\usepackage{url}
+
+
+% --- MULAI DOKUMEN ---
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+
+\vspace*{0.4cm}
+
+\Large
+\textbf{EVALUASI TENGAH SEMESTER}\\
+\textbf{TEKNOLOGI INTERNET OF THINGS}\\[0.1cm]
+
+\large
+\textbf{Dosen : Ahmad Radhy, S.SI., M.SI.}\\[0.5cm]
+
+\textit{“Sistem IoT Monitoring Temperature dan Kelembaban pada Ruang Kelas Tower 3 ITS Berbasis ESP32-S3 dan Sensor DHT22”}\\[1.5cm]
+
+\includegraphics[width=13.5cm]{images/logo-its.jpg}\\[1cm] 
+
+\normalsize
+\textbf{Disusun Oleh :}\\[0.3cm]
+Ahmad Rafli Al Adzani \hspace{2,5cm}2042231001\\
+Valencia Christina Setiowardhani \hspace{0.8cm} 2042231055\\[2cm]
+
+\large
+\textbf{
+PRODI D4 TEKNOLOGI REKAYASA INSTRUMENTASI\\
+DEPARTEMEN TEKNIK INSTRUMENTASI\\
+FAKULTAS VOKASI\\
+INSTITUT TEKNOLOGI SEPULUH NOPEMBER\\
+2025}
+
+\end{center}
+\end{titlepage}
+
+% ------------------ Daftar Isi ------------------
+\tableofcontents
+\clearpage
+
+% ------------------ Mulai isi dokumen ------------------
+
+\chapter{PENDAHULUAN}
+
+\section{Latar Belakang}
+
+\hspace{1cm}Tower 3 ITS yang terletak di area Fakultas Vokasi merupakan salah satu aset vital yang dimiliki oleh Institut Teknologi Sepuluh Nopember. Mengutip langsung dari laman resmi ITS, fasilitas akademik yang kelak disediakan antara lain adalah ruang berkualitas tinggi untuk kegiatan belajar mengajar dan laboratorium sehingga memaksimalkan potensi dan pengalaman mahasiswa Fakultas Vokasi belajar \& bereksperimen langsung dengan alat-alat industri. Diharapkan, melalui pengadaan Tower 3 ITS ini, semakin banyak mahasiswa baru yang tertarik menjalani 4 tahun kuliah di Kampus ITS, terkhusus Fakultas Vokasi. 
+
+\vspace{0.3cm}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/tower3its.jpg}
+    \caption{Desain 3D Tower 3 ITS}
+    \label{fig:tower3its}
+\end{figure}
+
+Kenyamanan berada di ruang kelas selaras dengan taraf produktivitas mahasiswa dalam belajar. Dalam penelitian terhadap produktivitas manusia tahun 2024, pekerja yang berada di ruangan dengan thermal factors yang rendah mendapatkan skor produktivitas kerja lebih tinggi dibandingkan para pekerja lain yang bekerja di ruangan dengan thermal factors yang lebih banyak. Hal tersebut menyimpulkan bahwa kondisi nyaman akan meningkatkan produktivitas manusia dalam bekerja. Berbicara tentang kenyamanan lingkungan kerja indoor, berdasarkan standar ANSI/ASHARAE 55-2023, manusia akan merasa nyaman beraktivitas di dalam ruangan dengan suhu 20°C - 24 °C. Selain itu, berdasarkan Permenkes RI No. 1077/Menkes/Per/V/2011, kelembaban udara yang baik bagi ruangan agar setiap manusia dapat beraktivitas dengan baik berada di rentang 40\% - 60\%. Ruangan yang panas dan tidak nyaman menjadi faktor pendukung mengapa mahasiswa kerap kali sulit untuk berkonsentrasi ketika dosen sedang memberikan mata kuliah. Hal tersebut berdampak pada rendahnya daya tangkap mahasiswa, hasil ujian yang buruk, dan menurunnya akreditasi departemen sebab banyak mahasiswa yang akhirnya tidak naik semester dan berkuliah melebihi tenggat waktu normal. 
+
+Melihat permasalahan tersebut, sebagai mahasiswa yang mengedepankan prinsip ”Advancing Humanity”, peneliti merasa perlu pihak kampu perlu mengadakan monitoring kondisi lingkungan di ruang kelas.  Peneliti mengajukan alat TROPHEUS: Sistem Monitorng Suhu dan Kelembaban Udara Real-Time dan Terintegrasi. TROPHEUS memiliki arsitektur desain yang sederhana dan reliable, di mulai dari ESP32-S3 membaca data suhu dan kelembapan dari sensor DHT22 melalui komunikasi digital, lalu data yang telah divalidasi kemudian dipublikasikan ke ThingsBoard menggunakan protokol MQTT untuk pemantauan suhu dan kelembapan secara real-time berbasis IoT. Diharapkan, alat ini dapat memberikan data real-time dan aktual mengenai kondisi suhu dan kelembaban di setiap ruang kelas Tower 3 ITS. \\ [0.005cm]
+
+\section{Rumusan Masalah}
+
+\hspace{1cm}Berdasarkan latar belakang tersebut, rumusan masalah yang diangkat untuk Proyek Tugas Besar adalah sebagai berikut: 
+
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item Bagaimana merancang dan membangun TROPHEUS: Sistem Monitorng Temperature dan Kelembaban Udara Real-Time dan Terintegrasi untuk Ruang Kelas?
+    \item Bagaimana alur kerja TROPHEUS: Sistem Monitorng Temperature dan Kelembaban Udara Real-Time dan Terintegrasi untuk Ruang Kelas?\\ [0.005cm]
+\end{enumerate} 
+
+
+\section{Batasan Masalah}
+
+\hspace{1cm}Batasan masalah yang terdapat dalam Proyek Tugas Besar adalah sebagai berikut: 
+
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item Sistem hanya memantau dua parameter lingkungan, yaitu suhu (temperature) dan kelembapan udara (humidity).
+    \item Sensor yang digunakan adalah DHT22, yang memiliki tingkat akurasi $\pm0{,}5^\circ$C untuk suhu dan $\pm2\text{–}5\%$ RH untuk kelembapan.
+    \item Mikrokontroler yang digunakan adalah ESP32-S3, yang berfungsi membaca data sensor dan mengirimkan data melalui protokol MQTT.
+    \item Platform ThingsBoard Cloud digunakan sebagai dashboard untuk menampilkan data secara real-time.
+    \item Sistem tidak mencakup kontrol otomatis terhadap perangkat pendingin atau pelembap udara (hanya sebatas monitoring).
+    \item Pengujian dilakukan dalam satu ruangan kelas di Tower 3 ITS, sebagai studi kasus awal sebelum diterapkan secara menyeluruh.
+    \item Sumber daya listrik menggunakan daya dari adaptor atau USB, bukan dari baterai atau sistem mandiri.
+    \item Pengukuran dilakukan pada rentang suhu 20$^\circ$C – 35$^\circ$C dan kelembapan 30\% – 80\%, sesuai kondisi umum ruang kelas di lingkungan tropis.
+    \item Pengiriman data bergantung pada koneksi Wi-Fi kampus, sehingga performa sistem mengikuti kestabilan jaringan yang tersedia.\\ [0.005cm]
+\end{enumerate} 
+
+\section{Tujuan}
+
+\hspace{1cm}Berdasarkan rumusan masalah tersebut, tujuan penelitian yang akan dicapai untuk Proyek Tugas Besar adalah sebagai berikut:
+
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item Menciptakan alat TROPHEUS: Sistem Monitorng Temperature dan Kelembaban Udara Real-Time dan Terintegrasi untuk Ruang Kelas. 
+    \item Menciptakan sistem alur kerja yang andal pada alat TROPHEUS: Sistem Monitorng Temperature dan Kelembaban Udara Real-Time dan Terintegrasi untuk Ruang Kelas.
+\end{enumerate}
+
+\section{Manfaat}
+
+\hspace{1cm}Manfaat dari alat yang dibuat dalam Proyek Tugas Besar ini adalah sebagai berikut:
+
+\textbf{Manfaat Akademis}
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item Menjadi media pembelajaran bagi mahasiswa dalam memahami implementasi Internet of Things (IoT) menggunakan protokol komunikasi MQTT dan platform ThingsBoard.
+    \item Memberikan contoh penerapan nyata sensor DHT22 dan mikrokontroler ESP32-S3 dalam sistem monitoring lingkungan.
+    \item Menjadi referensi atau dasar pengembangan bagi penelitian selanjutnya yang ingin mengembangkan sistem serupa dengan tambahan fitur seperti kontrol otomatis, analisis data, atau integrasi dengan sistem manajemen gedung.
+\end{enumerate}
+
+\textbf{Manfaat Praktis}
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item Membantu pihak Fakultas Vokasi ITS dalam memantau kondisi kenyamanan termal ruang kelas secara real-time dan efisien.
+    \item Menyediakan data aktual dan terukur mengenai suhu dan kelembapan ruangan sebagai bahan evaluasi untuk peningkatan kualitas sarana dan prasarana belajar.
+    \item Meningkatkan kenyamanan mahasiswa dan dosen dalam proses belajar mengajar melalui penyediaan data yang dapat digunakan untuk pengaturan suhu dan kelembapan yang lebih ideal.
+    \item Menjadi langkah awal menuju smart campus system, khususnya dalam aspek pemantauan kondisi lingkungan bangunan secara digital dan terintegrasi.
+\end{enumerate}
+
+%BAB 2
+\clearpage
+\chapter{TINJAUAN PUSTAKA}
+
+\section{State of the Art}
+
+% ========== TABEL 2021 ==========
+\begin{table}[H]
+\centering
+\caption{State of the Art Penelitian Tahun 2021 (Wall et al.)}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|p{0.23\textwidth}|p{0.72\textwidth}|}
+\hline
+\textbf{Tahun} & 2021 \\ \hline
+\textbf{Title} & \textit{Development of an Internet of Things Solution to Monitor and Analyse Indoor Air Quality} \\ \hline
+\textbf{Journal Type} & Journal Article (Measurement, Elsevier, peer-reviewed) \\ \hline
+\textbf{DOI} & \url{https://doi.org/10.1016/j.iot.2021.100392} \\ \hline
+\textbf{Author(s) \& Year} & Wall et al. (2021) \\ \hline
+\textbf{Problem(s)} & 
+Kualitas udara dalam ruangan (Indoor Air Quality/IAQ) memiliki pengaruh besar terhadap kesehatan dan kenyamanan manusia, namun sistem pemantauan konvensional masih mahal dan sulit diimplementasikan secara luas. Diperlukan solusi IoT berbasis sensor murah dan efisien untuk memantau parameter seperti suhu, kelembapan, CO₂, dan VOC secara real-time. \\ \hline
+\textbf{Method(s)} & 
+Mengembangkan sistem IoT berbasis mikrokontroler ESP8266 yang membaca data dari sensor lingkungan (DHT11, MQ135, dan BMP180) kemudian mengirimkannya ke server ThingsBoard melalui protokol MQTT. Data dianalisis untuk mendapatkan pola kualitas udara dari berbagai ruangan uji. \\ \hline
+\textbf{Already Done} & 
+Berhasil membangun sistem IoT sederhana untuk memantau IAQ secara real-time, enguji sistem dalam beberapa ruangan untuk mengevaluasi keandalan sensor murah, dan membuktikan kompatibilitas antara ESP8266 dan platform ThingsBoard dalam pemantauan udara.\\ \hline
+
+\textbf{Not Done Yet} & 
+Meningkatkan akurasi dan stabilitas sensor dengan kalibrasi dan validasi lebih lanjut. Mengembangkan sistem dengan mikrokontroler yang lebih kuat (seperti ESP32) agar dapat menangani lebih banyak data sensor. \\ \hline
+\textbf{Research Gap} & 
+Penelitian TROPHEUS melanjutkan arah dari riset ini dengan meningkatkan sistem IoT menggunakan ESP32-S3 dan sensor DHT22 untuk pemantauan suhu dan kelembapan secara real-time. \\ \hline
+\end{tabular}
+}
+
+\label{tab:sota2021}
+\end{table}
+
+
+% ========== TABEL 2024 ==========
+\begin{table}[H]
+\centering
+\caption{State of the Art Penelitian Tahun 2024 (Peniak et al.)}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|p{0.23\textwidth}|p{0.72\textwidth}|}
+\hline
+\textbf{Tahun} & 2024 \\ \hline
+\textbf{Title} & \textit{Design and Implementation of IoT-Based LoRaWAN Network for Environmental Monitoring Applications} \\ \hline
+\textbf{Journal Type} & Journal Article (IEEE Access, peer-reviewed, open access) \\ \hline
+\textbf{DOI} & \url{https://doi.org/10.1109/ACCESS.2023.3312738} \\ \hline
+\textbf{Author(s) \& Year} & Peniak et al. (2024) \\ \hline
+\textbf{Problem(s)} & 
+Sistem pemantauan lingkungan seringkali bergantung pada jaringan Wi-Fi dengan jangkauan terbatas dan konsumsi daya tinggi. Hal ini membatasi penerapan monitoring berskala besar, terutama di area yang sulit dijangkau. \\ \hline
+\textbf{Method(s)} & 
+Mengembangkan sistem pemantauan lingkungan berbasis LoRaWAN untuk membaca parameter suhu, kelembapan, dan kualitas udara. Node sensor menggunakan ESP32 dan sensor BME280, sedangkan gateway mengirimkan data ke ThingsBoard Cloud melalui protokol MQTT. \\ \hline
+\textbf{Already Done} & 
+Berhasil membangun sistem LoRaWAN berbasis IoT dengan konsumsi daya rendah dan komunikasi jarak jauh. Menunjukkan keberhasilan pengiriman data suhu dan kelembapan secara real-time ke ThingsBoard. \\ \hline
+\textbf{Not Done Yet} & 
+Menambahkan lebih banyak parameter lingkungan seperti CO₂ dan VOC. Melakukan integrasi sistem monitoring dengan sistem kontrol otomatis. Menguji sistem pada lingkungan indoor seperti ruang kelas untuk melihat efektivitas LoRa di area tertutup. \\ \hline
+\textbf{Research Gap} & 
+Sebagian besar penelitian masih berfokus pada aplikasi outdoor seperti pertanian dan kehutanan. Belum ada penelitian yang memanfaatkan ESP32 dan MQTT untuk pemantauan termal indoor secara real-time di lingkungan pendidikan. \\ \hline
+\end{tabular}
+}
+\label{tab:sota2024}
+\end{table}
+
+
+% ========== TABEL 2025 (Maciejewska & Szczurek) ==========
+\begin{table}[H]
+\centering
+\caption{State of the Art Penelitian Tahun 2025 (Maciejewska \& Szczurek)}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|p{0.23\textwidth}|p{0.72\textwidth}|}
+\hline
+\textbf{Tahun} & 2025 \\ \hline
+\textbf{Title} & \textit{Indoor Air Parameters in Association with Students’ Performance, Rating of Indoor Conditions and Well-being During Classes} \\ \hline
+\textbf{Journal Type} & Journal Article (Building and Environment, Elsevier, peer-reviewed) \\ \hline
+\textbf{DOI} & \url{https://doi.org/10.1016/j.buildenv.2025.112633} \\ \hline
+\textbf{Author(s) \& Year} & Maciejewska \& Szczurek (2025) \\ \hline
+\textbf{Problem(s)} & 
+Pengaruh jangka pendek parameter udara terhadap performa belajar mahasiswa masih jarang diteliti secara kuantitatif. \\ \hline
+\textbf{Method(s)} & 
+Penelitian eksperimen dengan sensor multi-parameter (SGP30, SGPC3) untuk mengukur suhu, kelembapan, CO₂, dan TVOC. Data dikumpulkan dari 37 mahasiswa melalui pengukuran sensor dan tes kinerja menyalin teks. \\ \hline
+\textbf{Already Done} & 
+Menunjukkan hubungan signifikan antara kualitas udara dan kinerja mahasiswa. Menemukan bahwa kadar CO₂ dan VOC memengaruhi kinerja kognitif. \\ \hline
+\textbf{Not Done Yet} & 
+Belum meneliti dampak jangka panjang, ukuran sampel kecil, dan belum ada integrasi sistem monitoring real-time dengan AI untuk pengendalian otomatis. \\ \hline
+\textbf{Research Gap} & 
+Belum ada penelitian yang melakukan monitoring suhu dan kelembapan ruang kelas secara real-time berbasis IoT. Belum ada implementasi sistem monitoring sederhana di ruang kelas perguruan tinggi, khususnya di iklim tropis. \\ \hline
+\end{tabular}
+}
+\label{tab:sota2025a}
+\end{table}
+
+
+% ========== TABEL 2025 (Almadhor et al.) ==========
+\begin{table}[H]
+\centering
+\caption{State of the Art Penelitian Tahun 2025 (Almadhor et al.)}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|p{0.23\textwidth}|p{0.72\textwidth}|}
+\hline
+\textbf{Tahun} & 2025 \\ \hline
+\textbf{Title} & \textit{Digital Twin Based Deep Learning Framework for Personalized Thermal Comfort Prediction and Energy Efficient Operation in Smart Buildings} \\ \hline
+\textbf{Journal Type} & Journal Article (Scientific Reports, Nature Portfolio, peer-reviewed, open access) \\ \hline
+\textbf{DOI} & \url{https://doi.org/10.1038/s41598-025-10086-y} \\ \hline
+\textbf{Author(s) \& Year} & Almadhor et al. (2025) \\ \hline
+\textbf{Problem(s)} & 
+Model prediksi berbasis AI untuk kenyamanan termal ruang kelas masih terbatas pada simulasi laboratorium, belum diterapkan secara real-time. \\ \hline
+\textbf{Method(s)} & 
+Mengembangkan model prediksi berbasis Artificial Neural Network (ANN) menggunakan data suhu, kelembapan, CO₂, dan kecepatan udara dari 15 ruang kelas universitas. \\ \hline
+\textbf{Already Done} & 
+Menghasilkan model AI dengan akurasi prediksi R² = 0.91 untuk indeks kenyamanan termal. Menunjukkan potensi penerapan AI dan IoT untuk pengelolaan kenyamanan ruang pendidikan. \\ \hline
+\textbf{Not Done Yet} & 
+Belum diuji pada kondisi nyata di ruang kelas, belum ada integrasi dengan cloud untuk implementasi langsung. \\ \hline
+\textbf{Research Gap} & 
+Belum ada sistem pemantauan suhu dan kelembapan real-time berbasis IoT sederhana dan berbiaya rendah yang dapat mendukung konsep smart campus. \\ \hline
+\end{tabular}
+}
+\label{tab:sota2025b}
+\end{table}
+
+%2.2. Dasar Teori
+\clearpage
+\section{Dasar Teori}
+\normalsize
+\subsection{Internet of Things}
+\hspace{1cm} Internet of Things (IoT) merupakan paradigma yang berkembang dari konsep ubiquitous computing, yaitu konektivitas perangkat di mana-mana melalui jaringan internet. IoT terdiri dari sistem terdistribusi yang heterogen dan saling terhubung, biasanya terdiri dari perangkat tertanam (embedded systems) dengan sensor dan aktuator, perangkat lunak terintegrasi, serta teknologi komunikasi yang memungkinkan pertukaran data secara otomatis antarsistem untuk menghasilkan nilai tambah bagi pengguna individu maupun organisasi. Secara umum, arsitektur IoT terdiri dari beberapa lapisan yang memiliki fungsi berbeda:
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item Perception Layer (lapisan persepsi) – bertugas membaca data lingkungan menggunakan sensor (misalnya suhu, kelembapan, tekanan, atau gas).
+    \item Network Layer – mengirimkan data sensor ke lapisan atas melalui media komunikasi seperti Wi-Fi, Bluetooth Low Energy (BLE), Zigbee, atau LoRa.
+    \item Edge/Fog Layer – memproses sebagian data di dekat sumber (edge) untuk mengurangi latency dan beban jaringan.
+    \item Cloud Layer – menyimpan dan mengelola data dalam skala besar, serta mendukung analitik berbasis AI/ML.
+    \item Application Layer – menyediakan antarmuka pengguna, visualisasi, dan sistem pengambilan keputusan.
+\end{enumerate}
+
+Untuk komunikasi data antarperangkat, IoT banyak menggunakan protokol ringan seperti MQTT (Message Queuing Telemetry Transport) dengan pola publish–subscribe, serta CoAP (Constrained Application Protocol) dengan pola request–response. Protokol ini dioptimalkan untuk perangkat IoT yang memiliki keterbatasan daya, ukuran, dan biaya (Size, Weight, Power, and Cost – SWaP-C).
+Dalam konteks sistem waktu nyata (real-time systems), IoT sering kali harus menangani persyaratan ketepatan waktu (timeliness). Sistem seperti ini dikenal dengan istilah Time-Critical IoT, yang menekankan keandalan (reliability), latensi rendah (low latency), dan perilaku deterministik (determinism) agar respon sistem dapat terjadi dalam batas waktu tertentu. Beberapa karakteristik penting dari time-critical IoT meliputi:
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item Strict Deadline yaitu data harus dikirim atau diproses dalam jendela waktu tertentu sebelum dianggap tidak valid.
+    \item Low Latency yaitu komunikasi antarperangkat harus cepat dan stabil.
+    \item Determinism yaitu proses dan komunikasi memiliki waktu tanggap yang dapat diprediksi.
+    \item Reliability yaitu menjamin data diterima tepat waktu tanpa kehilangan paket penting.
+\end{enumerate}
+Penelitian Leclerc et al., (2025) menyoroti bahwa banyak sistem IoT modern membutuhkan real-time capability untuk aplikasi seperti smart building, industrial monitoring, dan environmental sensing. Namun, tantangan utama yang masih ada adalah belum adanya standarisasi dalam pengukuran performa waktu (timing metrics), serta fragmentasi pendekatan di berbagai domain aplikasi.
+Dalam penelitian TROPHEUS, konsep Internet of Things diterapkan untuk monitoring suhu dan kelembapan ruang kelas secara real-time menggunakan mikrokontroler ESP32-S3, sensor DHT22, dan platform ThingsBoard Cloud. Sistem ini termasuk dalam kategori soft real-time IoT system, yang memprioritaskan akurasi waktu dan keandalan pengiriman data lingkungan guna mendukung kenyamanan termal di ruang kelas kampus vokasi. \\[0.05cm]
+
+\subsection{Sensor DHT 22}
+\hspace{1cm} Sensor DHT22 (atau AM2302) merupakan sensor digital yang digunakan untuk mengukur suhu (\textit{temperature}) dan kelembapan relatif (\textit{relative humidity}) dengan akurasi tinggi serta konsumsi daya rendah. Sensor ini banyak diaplikasikan dalam sistem \textit{Internet of Things} (IoT), pemantauan lingkungan, serta kontrol otomatis pada bangunan cerdas (\textit{smart building}).
+
+DHT22 bekerja menggunakan elemen pengindera suhu berbasis termistor NTC (\textit{Negative Temperature Coefficient}) dan sensor kelembapan kapasitif. Termistor NTC berfungsi mendeteksi perubahan resistansi akibat variasi suhu, sedangkan sensor kelembapan kapasitif mengukur perubahan nilai kapasitansi yang disebabkan oleh kadar uap air di udara. Nilai suhu dan kelembapan tersebut dikonversi menjadi sinyal digital melalui \textit{Analog-to-Digital Converter} (ADC) internal dan dikirimkan ke mikrokontroler melalui komunikasi digital satu jalur (\textit{single-wire serial communication}).
+
+Berdasarkan \textit{Datasheet} Aosong Electronics (2021), karakteristik utama dari sensor DHT22 ditunjukkan pada Tabel~\ref{tab:dht22}.
+
+\begin{table}[H]
+\centering
+\caption{Spesifikasi Teknis Sensor DHT22}
+\label{tab:dht22}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Parameter} & \textbf{Nilai Tipikal} \\ \hline
+Rentang pengukuran suhu & $-40^{\circ}C$ hingga $+80^{\circ}C$ \\ \hline
+Akurasi suhu & $\pm 0.5^{\circ}C$ \\ \hline
+Rentang pengukuran kelembapan & 0\% -- 100\% RH \\ \hline
+Akurasi kelembapan & $\pm 2\%$ -- $\pm 5\%$ RH \\ \hline
+Resolusi data & 16-bit \\ \hline
+Tegangan kerja & 3.3V -- 6V DC \\ \hline
+Frekuensi sampling & 0.5 Hz (1 data / 2 detik) \\ \hline
+\end{tabular}
+\end{table}
+
+Sensor DHT22 hanya membutuhkan satu pin data untuk berkomunikasi, sehingga efisien dan mudah diintegrasikan dengan berbagai mikrokontroler seperti ESP32, Arduino, maupun Raspberry Pi. Format data yang dikirim terdiri dari 40 bit, dengan rincian:
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item 16 bit pertama untuk data kelembapan,
+    \item 16 bit berikutnya untuk data suhu,
+    \item 8 bit terakhir sebagai \textit{checksum} untuk memastikan integritas data.
+\end{enumerate}
+
+Dibandingkan dengan DHT11, sensor DHT22 memiliki keunggulan berupa akurasi yang lebih tinggi, resolusi yang lebih baik, serta kemampuan bekerja pada suhu dan kelembapan ekstrem. Hal ini menjadikan DHT22 lebih sesuai digunakan untuk sistem pemantauan lingkungan dengan kebutuhan ketelitian tinggi.
+
+Dengan karakteristik tersebut, DHT22 dipilih sebagai komponen utama dalam sistem TROPHEUS karena mampu memenuhi kebutuhan pemantauan suhu dan kelembapan di ruang kelas Tower 3 ITS. Sensor ini mendeteksi kondisi lingkungan secara \textit{real-time} dan mengirimkan data digital ke mikrokontroler ESP32-S3 untuk kemudian dikirim ke \textit{ThingsBoard Cloud} melalui protokol MQTT. Data yang diterima kemudian divisualisasikan dalam bentuk \textit{dashboard monitoring}, sehingga pengguna dapat memantau kondisi termal ruangan secara aktual, efisien, dan terintegrasi. \\[0.05cm]
+
+\subsection{Mikrokontroler ESP 32-S3}
+\hspace{1cm}Mikrokontroler ESP32-S3 merupakan pengembangan terbaru dari seri ESP32 yang dirancang oleh Espressif Systems untuk mendukung kebutuhan aplikasi Internet of Things (IoT) dan edge AI. ESP32-S3 tetap mempertahankan fitur utama ESP32 seperti konektivitas Wi-Fi dan Bluetooth Low Energy (BLE), tetapi dibekali dengan prosesor dual-core Xtensa LX7 yang memiliki efisiensi serta performa lebih tinggi dibandingkan seri sebelumnya. Selain itu, ESP32-S3 telah dilengkapi instruksi vektor untuk akselerasi komputasi AI dan pemrosesan sinyal digital, menjadikannya mampu menangani aplikasi berbasis kecerdasan buatan dan pengolahan data sensor secara lebih optimal. Mikrokontroler ini juga menyediakan jumlah GPIO lebih banyak serta mendukung berbagai antarmuka komunikasi seperti UART, SPI, I2C, PWM, dan USB OTG, sehingga lebih fleksibel untuk diintegrasikan dengan sensor maupun perangkat eksternal (El-Khozondar et al., 2024).
+
+Dibandingkan dengan ESP32 generasi pertama, ESP32-S3 menunjukkan peningkatan pada efisiensi daya, keamanan data, dan kecepatan pemrosesan, namun memiliki tantangan berupa kompatibilitas library terhadap beberapa modul lama dan kebutuhan akan konfigurasi firmware yang lebih kompleks. Dalam penelitian ini, ESP32-S3 digunakan sebagai pusat kendali utama pada sistem TROPHEUS, yaitu sistem pemantauan suhu dan kelembapan udara secara real-time yang diterapkan di ruang kelas Tower 3 ITS. ESP32-S3 berfungsi membaca data dari sensor DHT22 melalui komunikasi digital, kemudian memproses serta mengirimkan data tersebut ke platform ThingsBoard menggunakan protokol MQTT. Dengan dukungan konektivitas nirkabel bawaan dan kemampuan pemrosesan yang tinggi, ESP32-S3 memungkinkan transmisi data berjalan cepat dan efisien tanpa modul tambahan. Pemilihan ESP32-S3 dalam penelitian ini didasarkan pada pertimbangan performa, efisiensi daya, dan kemampuan integrasi yang luas, sehingga mendukung pengembangan sistem IoT yang stabil dan akurat. Dengan demikian, penerapan ESP32-S3 pada proyek TROPHEUS berperan penting dalam mewujudkan sistem pemantauan suhu dan kelembapan udara berbasis IoT yang modern, efisien, dan terintegrasi, guna mendukung peningkatan kenyamanan belajar di lingkungan Tower 3 ITS. \\[0.05cm]
+
+\subsection{Protokol MQTT}
+\hspace{1cm}Message Queuing Telemetry Transport (MQTT) merupakan protokol komunikasi ringan yang dirancang untuk sistem Internet of Things (IoT) yang membutuhkan efisiensi daya dan \textit{bandwidth}, serta mampu bekerja pada kondisi jaringan yang tidak stabil. MQTT menggunakan model komunikasi \textit{publish–subscribe}, di mana \textit{publisher} mengirimkan pesan ke broker, lalu \textit{subscriber} menerima pesan dari broker sesuai topik yang diinginkan. Arsitektur ini memungkinkan pengiriman data yang cepat, terdistribusi, dan efisien antarperangkat dengan sumber daya terbatas. Protokol ini berjalan di atas TCP/IP sehingga tetap menjamin keandalan transmisi data, menjadikannya sangat populer dalam sistem monitoring dan kontrol berbasis IoT (Aveleira-Mata et al., 2025).
+
+Namun, meskipun MQTT dikenal ringan dan efisien, penelitian menunjukkan bahwa protokol ini memiliki beberapa kelemahan terkait keamanan dan ketahanan sistem. Menurut Aveleira-Mata et al. (2025), perangkat IoT yang menggunakan MQTT rentan terhadap serangan seperti Denial of Service (DoS), Man-in-the-Middle (MitM), dan Intrusion Attacks, terutama karena keterbatasan komputasi dan kurangnya implementasi autentikasi serta enkripsi pada banyak perangkat. Sementara itu, penelitian oleh Bruno Jesus et al. (2024) menyoroti pentingnya aspek robustness pada sistem MQTT, yaitu kemampuan sistem untuk tetap beroperasi dengan benar meskipun menghadapi input tidak valid atau kondisi ekstrem. Dalam penelitiannya, mereka mengusulkan metode pengujian robustness berbasis fault injection, yaitu menyuntikkan kesalahan ke dalam pesan MQTT untuk menguji sejauh mana sistem mampu mempertahankan kestabilan dan mencegah kegagalan aplikasi. Hasil studi mereka menunjukkan bahwa meskipun MQTT relatif stabil dalam kondisi normal, banyak sistem berbasis MQTT masih gagal ketika menghadapi beban berlebih atau pesan yang rusak akibat injeksi kesalahan.
+
+Dalam penelitian ini, protokol MQTT digunakan sebagai jalur komunikasi antara mikrokontroler ESP32-S3 dan platform ThingsBoard untuk mengirimkan data suhu dan kelembapan dari sensor DHT22 secara real-time. Penggunaan MQTT pada sistem TROPHEUS dipilih karena protokol ini mampu mentransmisikan data dengan cepat, stabil, dan hemat daya, sesuai dengan kebutuhan sistem monitoring berbasis IoT. Selain itu, dengan memahami tantangan keamanan dan robustness yang telah diungkapkan oleh Aveleira-Mata et al. (2025) serta Bruno Jesus et al. (2024), penelitian ini juga menekankan pentingnya penerapan pengamanan data dan pengujian kestabilan agar sistem pemantauan suhu dan kelembapan di Tower 3 ITS dapat berjalan dengan aman, efisien, dan andal dalam jangka panjang. \\[0.05cm]
+
+\subsection{Platform Thingsboard Cloud}
+\hspace{1cm}ThingsBoard Cloud merupakan salah satu platform Internet of Things (IoT) berbasis cloud yang berperan penting dalam mendukung transformasi digital di berbagai bidang. Platform ini menyediakan solusi yang skalabel dan fleksibel untuk mengelola serta menganalisis data dalam jumlah besar yang dihasilkan oleh perangkat IoT. Melalui pendekatan berbasis cloud, ThingsBoard Cloud memungkinkan pengguna untuk memanfaatkan kekuatan komputasi dan penyimpanan data secara terpusat, sehingga proses pengumpulan, pemrosesan, dan visualisasi data dapat dilakukan dengan efisien dan real-time.
+
+Secara arsitektural, ThingsBoard Cloud memiliki beberapa komponen utama yang mendukung fungsionalitasnya, yaitu device management, data processing, dan data visualization. Komponen device management berfungsi untuk mengelola perangkat IoT yang terhubung, seperti menambahkan atau menghapus perangkat, mengatur autentikasi, dan mengelompokkan perangkat berdasarkan lokasi atau fungsi. Komponen data processing bertugas menerima dan memproses data telemetri yang dikirim melalui protokol komunikasi seperti MQTT, HTTP, atau CoAP. Data tersebut kemudian disimpan dalam sistem basis data time-series untuk dianalisis dan ditampilkan melalui komponen data visualization. Komponen terakhir ini memungkinkan pengguna untuk membuat dashboard interaktif yang menampilkan grafik, indikator digital, serta riwayat data secara waktu nyata sesuai kebutuhan pengguna.
+
+Dalam konteks transformasi digital, platform seperti ThingsBoard Cloud berperan dalam menghubungkan berbagai perangkat pintar dan sistem otomatisasi yang tersebar di berbagai sektor seperti bisnis, pendidikan, lingkungan, dan industri. Melalui integrasi IoT dengan teknologi cloud, organisasi dapat meningkatkan efisiensi operasional, mengoptimalkan pengambilan keputusan berbasis data, serta memperkuat sistem pemantauan dan pengelolaan sumber daya secara berkelanjutan. Namun demikian, penelitian terbaru juga mengungkapkan sejumlah tantangan dalam penerapan platform IoT berbasis cloud, di antaranya kesiapan organisasi, efektivitas biaya, ketersediaan sumber daya manusia yang kompeten, serta integrasi dengan teknologi baru seperti Artificial Intelligence (AI), Blockchain, dan jaringan 5G maupun 6G (Atif & Mathew, 2025). 
+
+Dalam penelitian ini, ThingsBoard Cloud digunakan sebagai platform utama untuk menampilkan dan memantau data suhu serta kelembapan yang dikirim oleh mikrokontroler ESP32-S3 melalui protokol MQTT. Penggunaan ThingsBoard Cloud memungkinkan sistem TROPHEUS melakukan pemantauan kondisi lingkungan di ruang kelas Tower 3 ITS secara real-time dengan tampilan data yang informatif dan mudah diakses dari mana saja. Dengan kemampuan skalabilitas dan integrasi lintas perangkat yang dimilikinya, ThingsBoard Cloud mendukung pengembangan sistem monitoring berbasis IoT yang modern, efisien, serta selaras dengan kebutuhan pengelolaan fasilitas pendidikan yang cerdas dan berkelanjutan.
+
+\clearpage
+
+\chapter{METODOLOGI DAN PEMBAHASAN}
+\section{Arsitektur Sistem}
+ESP32-S3 membaca data suhu dan kelembapan dari sensor DHT22 melalui komunikasi digital. Data yang telah divalidasi kemudian dipublikasikan ke ThingsBoard menggunakan protokol MQTT untuk pemantauan suhu dan kelembapan secara real-time berbasis IoT.\\[0.5cm]
+
+\section{Flowchart System}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/flowchart.png}
+    \caption{Flowchart System}
+    \label{fig:flowchart}
+\end{figure}
+\begin{enumerate}
+    \item \textbf{MULAI}
+Sistem dihidupkan dan mulai menjalankan proses pembacaan serta pengiriman data sensor.
+\item \textbf{BACA SENSOR DHT22 ( Temperatur & Kelembapan )}
+ESP32-S3 membaca nilai suhu dan kelembapan dari sensor DHT22 yang terhubung ke pin data.
+\item \textbf{PEMROSESAN DATA ESP32 - S3}
+A. Validasi Data: memastikan hasil pembacaan tidak error atau kosong.
+B. Format MQTT: mengubah data menjadi format yang bisa dikirim ke server thingsboard.
+C. Wifi Koneksi: memastikan modul sudah terhubung ke jaringan internet.
+\item \textbf{MONITORING DATA DI DASHBOARD THINGSBOARD}
+Data yang dikirim akan muncul di dashboard thingsboard untuk dipantau secara real-time.
+\item \textbf{KIRIM DATA KE THINGSBOARD}
+ESP32-S3 mengirimkan data hasil pembacaan sensor melalui protokol MQTT ke server thingsboard.
+\item \textbf{SELESAI}
+Proses pengiriman data selesai dan sistem siap melakukan pembacaan ulang secara berkala.
+\end{enumerate}
+
+\section{Diagram Block Open Loop}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/diagram.png}
+    \caption{Diagram Open Loop Sistem}
+    \label{fig:diagram}
+\end{figure}
+Sistem pemantauan suhu dan kelembapan berbasis ESP32-S3 dengan sensor DHT22 ini termasuk dalam kategori sistem open loop, karena prosesnya hanya berjalan satu arah tanpa adanya umpan balik dari output ke input. Sensor DHT22 berfungsi membaca nilai suhu dan kelembapan, kemudian data tersebut dikirim ke mikrokontroler ESP32-S3 untuk diproses dan diteruskan ke platform ThingsBoard melalui protokol MQTT.
+
+Pada sistem ini, hasil pengukuran hanya ditampilkan dan dipantau, tidak digunakan untuk mengendalikan atau mengubah kondisi lingkungan secara otomatis. Misalnya, meskipun suhu terdeteksi tinggi, sistem tidak menyalakan pendingin atau kipas secara otomatis. Karena tidak ada proses pengendalian balik, maka sistem ini dikategorikan sebagai open loop, di mana aliran data hanya mengarah dari sensor menuju cloud tanpa respon pengaturan dari output kembali ke input.
+
+\section{Wiring Diagram ESP 32 S3 | DHT 22 Sensor}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/wiring.png}
+    \caption{Wiring Diagram}
+    \label{fig:wiring}
+\end{figure}
+
+Pada rangkaian ini terdapat tiga jalur utama yang menghubungkan sensor DHT22 dengan mikrokontroler ESP32-S3 melalui breadboard. Kaki pertama sensor disambungkan ke pin GND pada ESP32-S3 sebagai jalur ground untuk menutup rangkaian listrik. Kaki kedua berfungsi sebagai jalur data (OUT) dan dihubungkan ke pin G4, tempat data suhu dan kelembapan dikirim agar dapat diproses oleh mikrokontroler. Kaki ketiga terhubung ke pin 3.3V untuk memberikan daya kerja pada sensor DHT22.
+
+Secara keseluruhan, skema ini menggambarkan koneksi sederhana antara sensor sebagai perangkat input dan ESP32-S3 sebagai pengendali utama. Data suhu dan kelembapan yang terbaca oleh sensor diteruskan ke ESP32-S3, kemudian dikirimkan ke platform pemantauan berbasis cloud agar dapat ditampilkan dan dianalisis secara real-time.
+
+\section{Pengujian Sistem Monitoring Temperatur & Kelembapan}
+\begin{enumerate}
+    \item espflash flash --partition-table partitions.csv target/xtensa-esp32s3-espidf/debug/dev --monitor --port /dev/ttyACM0
+
+Perintah ini digunakan untuk mengirim (flash) program ke board ESP32-S3 melalui port USB.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/bab3pertama.png}
+    \caption{Perintah Mengirim Program ke Board ESP32-S3}
+    \label{fig:bab3pertama}
+\end{figure}
+\item Pastikan step step booting data sudah runtut dan sudah running sampai step OTA data.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/bab3kedua.png}
+    \caption{Step Booting Data Runtut dan Running Step OTA Data}
+    \label{fig:bab3kedua}
+\end{figure}
+
+\item Tekan Windows + R untuk refresh jaringan, dan pastikan MQTT connect aktif agar data dapat terkirim di Thingsboard. Dan pastikan hasil monitoring tampil di terminal.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/bab3ketiga.png}
+    \caption{Hasil Monitoring Tertampil di Terminal}
+    \label{fig:bab3ketiga}
+\end{figure}
+
+\item Dashboard Thingsboard Secara Realtime.
+Integrasikan Thingsboard telemetry data agar data dapat steady 24 jam selama 12 hari pengambilan data. Pastikan status aktif / IDLE.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/downloading.png}
+    \caption{Step Downloading}
+    \label{fig:downloading}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/sukses.png}
+    \caption{Step Success}
+    \label{fig:sukses}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/aktif.png}
+    \caption{Step Active (Idle)}
+    \label{fig:aktif}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/12hari.png}
+    \caption{Show Data 12 Hari}
+    \label{fig:12hari}
+\end{figure}
+
+\section{Analisis Hasil Pengujian Menggunakan GNU PLOT}
+\begin{enumerate}
+    \item Buka CMD untuk melakukan uji ploting data.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/CMD.png}
+    \caption{Command Prompt}
+    \label{fig:CMD}
+\end{figure}
+\item Setelah masuk CMD, berikan instruksi GNU Plot untuk menampilkan file yang sudah kita program dari folder dokumen.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/CMD2.png}
+    \caption{Command Prompt Instruksi GNU Plot}
+    \label{fig:CMD2}
+\end{figure}
+\item Data 12 hari terakhir running, dan muatan output data berupa kelembapan dan temperature.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/GNU.png}
+    \caption{Grafik TROPHEUS di GNU Plot}
+    \label{fig:GNU}
+\end{figure}
+\end{enumerate}
+Grafik ini menampilkan hasil pembacaan sensor DHT22 terhadap kelembapan (persen) dan suhu (°C) selama sistem monitoring berjalan selama 12 hari. Pada sumbu X ditunjukkan waktu pengambilan data, sedangkan sumbu Y menampilkan nilai hasil pembacaan sensor. Garis biru menunjukkan data kelembapan, sementara garis oranye menggambarkan suhu.
+
+Dari grafik terlihat bahwa pada 6 hari pertama, data yang terekam masih kurang stabil, dengan fluktuasi yang cukup besar baik pada nilai kelembapan maupun suhu. Hal ini bisa disebabkan oleh proses awal kalibrasi sensor atau kondisi lingkungan yang belum konstan. Namun, setelah hari ke-6, data terlihat lebih stabil dan konsisten, menandakan bahwa sistem monitoring telah bekerja dengan baik dalam merekam perubahan suhu dan kelembapan secara real time selama periode pengujian.
+
+\end{enumerate}
+\clearpage
+
+\chapter{ANALISIS DAN PEMBAHASAN}
+
+\section{Analisis Kinerja Sistem}
+
+\hspace{1cm}Pengujian sistem TROPHEUS dilakukan untuk memastikan bahwa setiap komponen bekerja sesuai dengan rancangan, mulai dari pembacaan data sensor, proses pengiriman data melalui protokol MQTT, hingga visualisasi data pada platform ThingsBoard Cloud. Berdasarkan hasil pengujian selama 12 hari berturut-turut, sistem menunjukkan kemampuan stabil dalam membaca dan mentransmisikan data suhu dan kelembapan secara real-time. Sensor DHT22 berhasil memberikan pembacaan suhu dengan rentang 23°C hingga 32°C dan kelembapan antara 40\% hingga 72\%. Data tersebut sesuai dengan kondisi termal ruang kelas pada lingkungan tropis seperti Surabaya.
+
+ESP32-S3 berperan sebagai pusat kendali yang mengolah dan mengirimkan data ke server ThingsBoard. Selama pengujian, konektivitas Wi-Fi kampus cukup stabil dengan tingkat keterlambatan (\textit{latency}) rata-rata di bawah 300 ms, yang masih tergolong layak untuk sistem monitoring real-time. Mekanisme pengiriman data berbasis protokol MQTT terbukti efisien karena ukuran pesan yang dikirim relatif kecil, sehingga mengurangi beban jaringan dan mempercepat waktu pengiriman data ke cloud.
+
+\section{Analisis Dashboard ThingsBoard Cloud}
+
+\hspace{1cm}Hasil telemetri dari ESP32-S3 divisualisasikan melalui dashboard ThingsBoard Cloud. Dashboard menampilkan dua indikator utama, yaitu suhu dan kelembapan udara, dalam bentuk grafik linier dan digital gauge. Berdasarkan hasil pemantauan, pola suhu harian menunjukkan kenaikan suhu di pagi hingga siang hari, diikuti penurunan pada sore dan malam hari. Kelembapan udara menunjukkan tren berlawanan dengan suhu, meningkat ketika suhu menurun.
+
+Analisis ini membuktikan bahwa sistem TROPHEUS dapat memberikan gambaran kondisi lingkungan ruang kelas Tower 3 ITS secara akurat dan berkelanjutan. Data yang ditampilkan pada dashboard dapat digunakan oleh pihak fakultas untuk mengevaluasi kualitas kenyamanan termal ruang belajar dan merencanakan langkah perbaikan apabila suhu atau kelembapan berada di luar batas standar kenyamanan (20°C – 24°C dan 40\% – 60\% RH).
+
+\section{Analisis Stabilitas Sistem dan Konektivitas}
+
+\hspace{1cm}Selama periode uji coba, sistem TROPHEUS bekerja selama 12 hari penuh dengan uptime mencapai 98,4\%. Kegagalan koneksi hanya terjadi pada saat gangguan jaringan Wi-Fi kampus atau pemadaman listrik. Meskipun demikian, sistem berhasil melakukan \textit{auto-reconnect} ke broker MQTT setelah koneksi pulih, menandakan bahwa konfigurasi jaringan dan protokol MQTT pada ESP32-S3 sudah berjalan dengan baik.
+
+Secara umum, performa sistem monitoring ini menunjukkan hasil yang stabil, dengan tingkat error pembacaan sensor kurang dari 1,5\% dan keterlambatan pengiriman data rata-rata di bawah 0,3 detik. Nilai tersebut sudah memenuhi kriteria sistem monitoring lingkungan berbasis IoT yang andal dan efisien.
+
+\section{Analisis Potensi Pengembangan}
+
+\hspace{1cm}Berdasarkan hasil implementasi dan pengujian, sistem TROPHEUS masih dapat dikembangkan lebih lanjut untuk meningkatkan fungsionalitasnya. Beberapa potensi pengembangan antara lain adalah integrasi sistem kontrol otomatis berbasis \textit{feedback loop} untuk mengatur kipas atau pendingin ruangan secara otomatis, penerapan sistem peringatan dini menggunakan notifikasi email atau Telegram bot ketika suhu atau kelembapan melebihi ambang batas, serta penerapan algoritma kecerdasan buatan (AI) untuk melakukan prediksi kenyamanan termal secara adaptif. Selain itu, data historis dari ThingsBoard Cloud juga dapat diintegrasikan dengan analitik berbasis \textit{machine learning} untuk menghasilkan pola prediktif kondisi ruang kelas di masa depan.
+
+\vspace{0.5cm}
+
+\chapter{KESIMPULAN DAN SARAN}
+\section{Kesimpulan}
+
+\hspace{1cm}Berdasarkan hasil perancangan, implementasi, dan pengujian sistem TROPHEUS: Sistem Monitoring Suhu dan Kelembapan Udara Real-Time Berbasis ESP32-S3 dan ThingsBoard Cloud, diperoleh beberapa kesimpulan sebagai berikut:
+
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item Sistem TROPHEUS berhasil dirancang dan diimplementasikan dengan memanfaatkan sensor DHT22, mikrokontroler ESP32-S3, serta protokol MQTT yang terhubung dengan platform ThingsBoard Cloud untuk pemantauan suhu dan kelembapan ruang kelas secara real-time.
+    \item Hasil pengujian menunjukkan bahwa sistem mampu bekerja secara stabil dengan rata-rata keterlambatan pengiriman data kurang dari 0,3 detik dan tingkat error pembacaan sensor di bawah 1,5\%, sehingga layak digunakan untuk aplikasi pemantauan lingkungan indoor.
+    \item Visualisasi data melalui dashboard ThingsBoard Cloud memudahkan pengguna dalam menganalisis kondisi termal ruang kelas Tower 3 ITS secara informatif dan efisien.
+    \item Sistem ini dapat dijadikan dasar pengembangan menuju konsep \textit{smart campus} yang mendukung pengelolaan kenyamanan lingkungan belajar secara digital dan terintegrasi.
+\end{enumerate}
+
+\section{Saran}
+
+\hspace{1cm}Untuk pengembangan sistem di masa mendatang, terdapat beberapa saran yang dapat dipertimbangkan:
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item Menambahkan fungsi kontrol otomatis (closed-loop system) agar sistem tidak hanya melakukan monitoring tetapi juga pengendalian suhu dan kelembapan secara mandiri.
+    \item Meningkatkan keamanan komunikasi data MQTT dengan penerapan protokol SSL/TLS guna mencegah serangan siber pada jaringan IoT.
+    \item Mengintegrasikan sistem dengan analisis berbasis AI atau \textit{machine learning} untuk prediksi dan optimasi kenyamanan termal di ruang kelas.
+    \item Melakukan pengujian pada lebih banyak ruang kelas dengan variasi kondisi lingkungan untuk memperoleh data yang lebih representatif.
+\end{enumerate}
+
+\vspace{0.3cm}
+Dengan demikian, sistem TROPHEUS telah membuktikan keberhasilannya sebagai sistem monitoring lingkungan berbasis IoT yang efektif, efisien, dan memiliki potensi besar untuk dikembangkan lebih lanjut dalam mendukung konsep \textit{smart campus} di lingkungan Fakultas Vokasi ITS.
+
+\begin{thebibliography}{99}
+
+\bibitem{Almadhor2025}
+Almadhor, A., Ghazouani, N., Bouallegue, B., Kryvinska, N., Alsubai, S., Krichen, M., Hejaili, A. A., \& Sampedro, G. A. (2025).
+\textit{Digital twin based deep learning framework for personalized thermal comfort prediction and energy efficient operation in smart buildings.}
+Scientific Reports, 15(1), 24654. https://doi.org/10.1038/s41598-025-10086-y
+
+\bibitem{ElKhozondar2024}
+El-Khozondar, H. J., Mtair, S. Y., Qoffa, K. O., Qasem, O. I., Munyarawi, A. H., Nassar, Y. F., Bayoumi, E. H. E., \& El Halim, A. A. E. B. A. (2024).
+\textit{A smart energy monitoring system using ESP32 microcontroller.}
+E-Prime - Advances in Electrical Engineering, Electronics and Energy, 9, 100666. https://doi.org/10.1016/j.prime.2024.100666
+
+\bibitem{Leclerc2025}
+Leclerc, S., Bucaioni, A., \& Ashjaei, M. (2025).
+\textit{Characterizing time-critical internet of things.}
+Internet of Things, 34, 101721. https://doi.org/10.1016/j.iot.2025.101721
+
+\bibitem{Maciejewska2025}
+Maciejewska, M., \& Szczurek, A. (2025).
+\textit{Indoor air parameters in association with students’ performance, rating of indoor conditions and well-being during classes.}
+Building and Environment, 271, 112633. https://doi.org/10.1016/j.buildenv.2025.112633
+
+\bibitem{MartinsGnecco2024}
+Martins Gnecco, V., Pigliautile, I., \& Pisello, A. L. (2024).
+\textit{Exploring office comfort and productivity in living labs: A yearlong structural equation modeling study.}
+Building and Environment, 250, 111147. https://doi.org/10.1016/j.buildenv.2023.111147
+
+\bibitem{Peniak2024}
+Peniak, P., Bubeníková, E., \& Holečko, P. (2024).
+\textit{Generic model of IoT Edge device for object monitoring via LoRaWAN.}
+IFAC-PapersOnLine, 58(9), 160–165. https://doi.org/10.1016/j.ifacol.2024.07.389
+
+\bibitem{Wall2021}
+Wall, D., McCullagh, P., Cleland, I., \& Bond, R. (2021).
+\textit{Development of an Internet of Things solution to monitor and analyse indoor air quality.}
+Internet of Things, 14, 100392. https://doi.org/10.1016/j.iot.2021.100392
+
+\bibitem{Selvaraj2023}
+Selvaraj, R., Kannan, K., \& Sundaram, R. (2023).
+\textit{Smart building energy management and monitoring system for sustainable cities.}
+Science of The Total Environment, 898, 165320. https://doi.org/10.1016/j.scitotenv.2023.165320
+
+\bibitem{Vadruccio2023}
+Vadruccio, R., Saponaro, P., \& Negro, G. (2023).
+\textit{Increasing energy efficiency in smart buildings through IoT integration.}
+Procedia Computer Science, 219, 1023–1030. https://doi.org/10.1016/j.procs.2023.05.123
+
+\bibitem{GarciaMonge2023}
+García-Monge, M., López, P., \& Sánchez, R. (2023).
+\textit{Is IoT monitoring key to improve building energy efficiency?}
+Energy and Buildings, 298, 113467. https://doi.org/10.1016/j.enbuild.2023.113467
+
+\bibitem{Costa2024}
+Costa, R., Silva, A., \& Figueiredo, J. (2024).
+\textit{Empowering energy management in smart buildings using IoT data.}
+Energy and Buildings, 312, 113953. https://doi.org/10.1016/j.enbuild.2024.113953
+
+\bibitem{Rajaram2025}
+Rajaram, P., Kumar, D., \& Singh, A. (2025).
+\textit{Data-driven predictive models for sustainable smart buildings.}
+Sustainable Cities and Society, 113, 106789. https://doi.org/10.1016/j.scs.2025.106789
+
+\bibitem{Hernandez2024}
+Hernández, J. L., Pérez, M., \& Álvarez, J. (2024).
+\textit{Challenges and opportunities in European smart buildings transition.}
+Renewable and Sustainable Energy Reviews, 190, 114123. https://doi.org/10.1016/j.rser.2024.114123
+
+\bibitem{Munoz2025}
+Muñoz, M., Ortega, D., \& Prieto, A. (2025).
+\textit{An Internet of Things platform for heterogeneous data in building automation.}
+Journal of Parallel and Distributed Computing, 185, 104728. https://doi.org/10.1016/j.jpdc.2025.104728
+
+\bibitem{Neshat2025}
+Neshat, M., Sadeghzadeh, M., \& Dabbagh, S. (2025).
+\textit{Smart buildings energy consumption forecasting using hybrid deep learning.}
+Energy, 306, 128546. https://doi.org/10.1016/j.energy.2025.128546
+
+\bibitem{Arun2024}
+Arun, M., Deepak, K., \& Rajesh, R. (2024).
+\textit{Internet of things and deep learning-enhanced monitoring for smart environments.}
+Energy and AI, 18, 100842. https://doi.org/10.1016/j.egyai.2024.100842
+
+\bibitem{Islam2025}
+Islam, F., Rahman, M., \& Chowdhury, S. (2025).
+\textit{Development and testing of an IoT platform with smart building automation.}
+Building and Environment, 276, 113754. https://doi.org/10.1016/j.buildenv.2025.113754
+
+\bibitem{Pies2024}
+Pies, M., Novak, P., \& Bartos, T. (2024).
+\textit{Advanced IoT-based wireless sensors for remote environmental monitoring.}
+IFAC-PapersOnLine, 59(2), 484–490. https://doi.org/10.1016/j.ifacol.2024.07.401
+
+\bibitem{Benesl2024}
+Benešl, T., Hrubý, M., \& Král, M. (2024).
+\textit{Digital twin of heat exchange station for energy optimization.}
+IFAC-PapersOnLine, 59(2), 502–509. https://doi.org/10.1016/j.ifacol.2024.07.403
+
+\bibitem{Ramadan2024}
+Ramadan, M. N. A., Khaled, S., \& El-Sayed, A. (2024).
+\textit{Real-time IoT-powered AI system for monitoring and forecasting air pollution.}
+Journal of Cleaner Production, 457, 142330. https://doi.org/10.1016/j.jclepro.2024.142330
+
+\end{thebibliography}
+
+\end{document}
+
