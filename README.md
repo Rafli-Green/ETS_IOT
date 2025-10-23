@@ -114,10 +114,14 @@ Firmware ini berjalan secara *looping*, membaca data secara berkala, kemudian me
 
 ---
 
-### Arsitektur Sistem
-Sistem TROPHEUS dirancang dengan arsitektur **open-loop**, di mana perangkat hanya melakukan pengukuran dan pengiriman data tanpa proses umpan balik otomatis terhadap kondisi lingkungan. Data dari sensor dikirimkan secara kontinu melalui jaringan Wi-Fi menuju broker MQTT, kemudian diteruskan ke platform ThingsBoard Cloud untuk divisualisasikan dalam bentuk grafik dan indikator real-time.  
 
-Diagram alur kerja sistem:
+### Arsitektur Sistem
+Sistem TROPHEUS dirancang dengan arsitektur **open-loop**, di mana perangkat hanya melakukan pengukuran dan pengiriman data tanpa proses umpan balik otomatis terhadap kondisi lingkungan.  
+Data dari sensor dikirimkan secara kontinu melalui jaringan Wi-Fi menuju broker MQTT, kemudian diteruskan ke platform ThingsBoard Cloud untuk divisualisasikan dalam bentuk grafik dan indikator real-time.  
+
+**Diagram alur kerja sistem:**
+[DHT22 Sensor] → [ESP32-S3] → [MQTT Broker] → [ThingsBoard Cloud Dashboard]
+
 
 ---
 
