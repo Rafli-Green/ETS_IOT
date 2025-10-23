@@ -122,6 +122,7 @@ SHOW DATA 12 HARI PENUGASAN AMBIL DATA
 
 <img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/5038dccd-93b6-4ac6-ac79-1bec0a97ef4d" />
 HASIL GNU PLOT 12 HARI PENUGASAN AMBIL DATA
+---
 
 ### 💻 Kode Program ESP32-S3 (Rust)
 
