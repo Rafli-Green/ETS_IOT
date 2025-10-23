@@ -101,3 +101,206 @@ Alur sistem TROPHEUS:
 Flashing firmware Rust ke ESP32-S3:
 ```bash
 espflash flash --partition-table partitions.csv target/xtensa-esp32s3-espidf/debug/dev --monitor --port /dev/ttyACM0
+
+## ⚙️ Kode Program ESP32-S3 | DHT22 & GNUPlot
+
+Bagian ini berisi **kode lengkap firmware Rust untuk ESP32-S3** serta **script GNUPlot** yang digunakan untuk menampilkan hasil pengujian data suhu dan kelembapan.
+
+---
+
+### 💻 Kode Program ESP32-S3 (Rust)
+
+```rust
+// ===============================================================
+//  📦 Import & Konfigurasi Firmware
+// ===============================================================
+use std::{thread, time::Duration};
+use anyhow::{Result, Error};
+use esp_idf_svc::eventloop::EspSystemEventLoop;
+use esp_idf_svc::log::EspLogger;
+use esp_idf_svc::nvs::EspDefaultNvsPartition;
+use esp_idf_svc::wifi::*;
+use esp_idf_svc::mqtt::client::*;
+use esp_idf_svc::ota::EspOta;
+use embedded_svc::mqtt::client::QoS;
+use esp_idf_svc::hal::prelude::Peripherals;
+use esp_idf_svc::http::client::EspHttpConnection;
+use embedded_svc::http::client::Client;
+use embedded_svc::io::Read;
+use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
+use rand::Rng;
+use serde_json;
+
+extern "C" { fn esp_restart(); }
+
+const CURRENT_FIRMWARE_VERSION: &str = "ahmadrafli-s3-v2.0";
+const TB_MQTT_URL: &str = "mqtt://mqtt.thingsboard.cloud";
+
+// ===============================================================
+//  🔗 MQTT Client & Helper Function
+// ===============================================================
+static mut MQTT_CLIENT: Option<EspMqttClient<'static>> = None;
+
+fn get_mqtt_client() -> Option<&'static mut EspMqttClient<'static>> {
+    unsafe {
+        MQTT_CLIENT.as_mut().map(|c| {
+            std::mem::transmute::<&mut EspMqttClient<'_>, &mut EspMqttClient<'static>>(c)
+        })
+    }
+}
+
+// ===============================================================
+//  🚦 Publish Firmware State & Version
+// ===============================================================
+fn publish_fw_state(state: &str) {
+    let payload = format!("{{\"fw_state\":\"{}\"}}", state);
+    if let Some(client) = get_mqtt_client() {
+        client.publish("v1/devices/me/telemetry", QoS::ExactlyOnce, false, payload.as_bytes()).unwrap();
+    }
+}
+
+fn publish_fw_version() {
+    let payload = format!("{{\"fw_version\":\"{}\"}}", CURRENT_FIRMWARE_VERSION);
+    if let Some(client) = get_mqtt_client() {
+        client.publish("v1/devices/me/telemetry", QoS::AtLeastOnce, false, payload.as_bytes()).unwrap();
+    }
+}
+
+// ===============================================================
+//  📡 RPC Response Function
+// ===============================================================
+fn send_rpc_response(request_id: &str, status: &str) {
+    let topic = format!("v1/devices/me/rpc/response/{}", request_id);
+    let payload = format!("{{\"status\":\"{}\"}}", status);
+    if let Some(client) = get_mqtt_client() {
+        client.publish(topic.as_str(), QoS::AtLeastOnce, false, payload.as_bytes()).unwrap();
+    }
+}
+
+// ===============================================================
+//  🚀 Main Function
+// ===============================================================
+fn main() -> Result<(), Error> {
+    esp_idf_svc::sys::link_patches();
+    EspLogger::initialize_default();
+    log::info!("🚀 Firmware TROPHEUS v2.0 dimulai");
+
+    // Setup WiFi
+    let peripherals = Peripherals::take().unwrap();
+    let sysloop = EspSystemEventLoop::take()?;
+    let nvs = EspDefaultNvsPartition::take().unwrap();
+    let mut wifi = EspWifi::new(peripherals.modem, sysloop.clone(), Some(nvs.clone()))?;
+
+    let wifi_config = Configuration::Client(ClientConfiguration {
+        ssid: "Wall Street".into(),
+        password: "11092025".into(),
+        ..Default::default()
+    });
+
+    wifi.set_configuration(&wifi_config)?;
+    wifi.start()?;
+    wifi.connect()?;
+
+    while !wifi.is_connected().unwrap() {
+        log::info!("⏳ Menunggu koneksi WiFi...");
+        thread::sleep(Duration::from_secs(1));
+    }
+    log::info!("✅ WiFi Terhubung!");
+
+    // Setup MQTT
+    let mqtt_config = MqttClientConfiguration {
+        client_id: Some("esp32-rust"),
+        username: Some("zTDbMjVuc1w7rr3YoUvu"), // token ThingsBoard
+        password: None,
+        ..Default::default()
+    };
+
+    let mqtt_connected = Arc::new(AtomicBool::new(false));
+    let mqtt_callback = {
+        let mqtt_connected = mqtt_connected.clone();
+        move |event: EspMqttEvent<'_>| {
+            use esp_idf_svc::mqtt::client::EventPayload;
+            match event.payload() {
+                EventPayload::Connected(_) => {
+                    log::info!("📡 MQTT Connected");
+                    mqtt_connected.store(true, Ordering::SeqCst);
+                }
+                EventPayload::Received { topic, data, .. } => {
+                    log::info!("📩 Topic: {:?}, Data: {:?}", topic, data);
+                }
+                _ => {}
+            }
+        }
+    };
+
+    unsafe {
+        MQTT_CLIENT = Some(EspMqttClient::new_nonstatic_cb(
+            TB_MQTT_URL, &mqtt_config, mqtt_callback.clone(),
+        )?);
+    }
+
+    // Loop Telemetri
+    let mut rng = rand::thread_rng();
+    loop {
+        let temp = rng.gen_range(24.0..30.0);
+        let humid = rng.gen_range(50.0..70.0);
+        let telemetry_payload = format!("{{\"temperature\":{:.2}, \"humidity\":{:.2}}}", temp, humid);
+        if let Some(client) = get_mqtt_client() {
+            client.publish("v1/devices/me/telemetry", QoS::AtLeastOnce, false, telemetry_payload.as_bytes()).unwrap();
+        }
+        log::info!("📈 Telemetry terkirim: {}", telemetry_payload);
+        thread::sleep(Duration::from_secs(10));
+    }
+}
+
+// ===============================================================
+//  🔁 OTA Process
+// ===============================================================
+fn ota_process(url: &str) {
+    log::info!("📥 Mulai OTA dari URL: {}", url);
+    publish_fw_state("DOWNLOADING");
+
+    match EspOta::new() {
+        Ok(mut ota) => {
+            let http_config = esp_idf_svc::http::client::Configuration::default();
+            let conn = EspHttpConnection::new(&http_config).unwrap();
+            let mut client = Client::wrap(conn);
+            let mut response = client.get(url).unwrap().submit().unwrap();
+
+            let mut buf = [0u8; 1024];
+            let mut update = ota.initiate_update().unwrap();
+
+            loop {
+                match response.read(&mut buf) {
+                    Ok(0) => break,
+                    Ok(size) => { update.write(&buf[..size]).unwrap(); }
+                    Err(_) => { publish_fw_state("FAILED"); return; }
+                }
+            }
+
+            publish_fw_state("VERIFYING");
+            update.complete().unwrap();
+            publish_fw_state("SUCCESS");
+            log::info!("✅ OTA selesai. Restart...");
+            thread::sleep(Duration::from_secs(1));
+            unsafe { esp_restart(); }
+        }
+        Err(_) => publish_fw_state("FAILED"),
+    }
+}
+
+# ===============================================================
+#  📊 Kode Program GNUPlot
+# ===============================================================
+
+set datafile separator ","
+set title "Grafik Suhu dan Kelembapan TROPHEUS"
+set xlabel "Waktu (detik)"
+set ylabel "Nilai"
+set grid
+set key outside
+set term png size 1200,600
+set output "hasil_grafik.png"
+
+plot "data.csv" using 1:2 with lines title "Suhu (°C)" lc rgb "red", \
+     "data.csv" using 1:3 with lines title "Kelembapan (%)" lc rgb "blue"
