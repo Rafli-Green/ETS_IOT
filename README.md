@@ -107,6 +107,21 @@ espflash flash --partition-table partitions.csv target/xtensa-esp32s3-espidf/deb
 Bagian ini berisi **kode lengkap firmware Rust untuk ESP32-S3** serta **script GNUPlot** yang digunakan untuk menampilkan hasil pengujian data suhu dan kelembapan.
 
 ---
+### 💻 SHOW UP STREAM DATA DARI AWAL HINGGA AKHIR
+<img width="569" height="328" alt="image" src="https://github.com/user-attachments/assets/9ba85cfd-dfcf-43ba-97f3-22a7ab07dbca" />
+STEP DOWNLOAD
+
+<img width="569" height="355" alt="image" src="https://github.com/user-attachments/assets/ddfabc44-ddb5-45a8-bde9-da471f9f091e" />
+STEP SUCCESS
+
+<img width="580" height="362" alt="image" src="https://github.com/user-attachments/assets/0893e169-dad4-42d9-a4eb-bd4dcc443e56" />
+STEP IDLE ( ACTIVE )
+
+<img width="575" height="309" alt="image" src="https://github.com/user-attachments/assets/6702e022-a696-4606-9e19-e30dfe573e79" />
+SHOW DATA 12 HARI PENUGASAN AMBIL DATA
+
+<img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/5038dccd-93b6-4ac6-ac79-1bec0a97ef4d" />
+HASIL GNU PLOT 12 HARI PENUGASAN AMBIL DATA
 
 ### 💻 Kode Program ESP32-S3 (Rust)
 
@@ -305,21 +320,6 @@ set output "hasil_grafik.png"
 plot "data.csv" using 1:2 with lines title "Suhu (°C)" lc rgb "red", \
      "data.csv" using 1:3 with lines title "Kelembapan (%)" lc rgb "blue"
 
-### 💻 SHOW UP STREAM DATA DARI AWAL HINGGA AKHIR
-<img width="569" height="328" alt="image" src="https://github.com/user-attachments/assets/9ba85cfd-dfcf-43ba-97f3-22a7ab07dbca" />
-STEP DOWNLOAD
-
-<img width="569" height="355" alt="image" src="https://github.com/user-attachments/assets/ddfabc44-ddb5-45a8-bde9-da471f9f091e" />
-STEP SUCCESS
-
-<img width="580" height="362" alt="image" src="https://github.com/user-attachments/assets/0893e169-dad4-42d9-a4eb-bd4dcc443e56" />
-STEP IDLE ( ACTIVE )
-
-<img width="575" height="309" alt="image" src="https://github.com/user-attachments/assets/6702e022-a696-4606-9e19-e30dfe573e79" />
-SHOW DATA 12 HARI PENUGASAN AMBIL DATA
-
-<img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/5038dccd-93b6-4ac6-ac79-1bec0a97ef4d" />
-HASIL GNU PLOT 12 HARI PENUGASAN AMBIL DATA
 
 
 
