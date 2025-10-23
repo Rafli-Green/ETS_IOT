@@ -95,6 +95,11 @@ Alur sistem TROPHEUS:
 | DHT22 (+) | 3.3V | Sumber daya |
 
 ---
+### 🐱 SHOW UP RESULT  OTA THINGSBOARD MQTT
+<img width="575" height="309" alt="image" src="https://github.com/user-attachments/assets/4348538e-0614-47b1-adb2-820f5a564f4a" />
+
+---
+---
 ### 🐙 SHOW UP RESULT  GNU PLOT
 <img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/837b1afa-e202-4e3c-a498-e71e20442929" />
 
