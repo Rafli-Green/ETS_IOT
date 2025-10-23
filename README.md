@@ -103,8 +103,8 @@ Gambar ini menampilkan hasil pembacaan sensor dari awal penugasan hingga selesai
 ---
 ### 🐙 SHOW UP RESULT  GNU PLOT
 <img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/837b1afa-e202-4e3c-a498-e71e20442929" />
-Grafik ini menampilkan hasil pembacaan sensor DHT22 terhadap kelembapan (persen) dan suhu (°C) selama sistem monitoring berjalan selama 12 hari. Pada sumbu X ditunjukkan waktu pengambilan data, sedangkan sumbu Y menampilkan nilai hasil pembacaan sensor. Garis biru menunjukkan data kelembapan, sementara garis oranye menggambarkan suhu.
-Dari grafik terlihat bahwa pada 6 hari pertama, data yang terekam masih kurang stabil, dengan fluktuasi yang cukup besar baik pada nilai kelembapan maupun suhu. Hal ini bisa disebabkan oleh proses awal kalibrasi sensor atau kondisi lingkungan yang belum konstan. Namun, setelah hari ke-6, data terlihat lebih stabil dan konsisten, menandakan bahwa sistem monitoring telah bekerja dengan baik dalam merekam perubahan suhu dan kelembapan secara real time selama periode pengujian.
+
+Grafik ini menampilkan hasil pembacaan sensor DHT22 terhadap kelembapan (persen) dan suhu (°C) selama sistem monitoring berjalan selama 12 hari. Pada sumbu X ditunjukkan waktu pengambilan data, sedangkan sumbu Y menampilkan nilai hasil pembacaan sensor. Garis biru menunjukkan data kelembapan, sementara garis oranye menggambarkan suhu. Dari grafik terlihat bahwa pada 6 hari pertama, data yang terekam masih kurang stabil, dengan fluktuasi yang cukup besar baik pada nilai kelembapan maupun suhu. Hal ini bisa disebabkan oleh proses awal kalibrasi sensor atau kondisi lingkungan yang belum konstan. Namun, setelah hari ke-6, data terlihat lebih stabil dan konsisten, menandakan bahwa sistem monitoring telah bekerja dengan baik dalam merekam perubahan suhu dan kelembapan secara real time selama periode pengujian.
 
 ---
 
