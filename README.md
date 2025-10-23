@@ -106,14 +106,9 @@ Firmware dikembangkan menggunakan **C/C++ (Arduino Framework)** dan mengatur:
 Sistem **TROPHEUS** dirancang dengan arsitektur **open-loop**, di mana perangkat hanya melakukan pengukuran dan pengiriman data tanpa umpan balik otomatis terhadap lingkungan.  
 
 **Diagram Alur Kerja Sistem:**  
-         🌡️ DHT22 Sensor
-                 ↓
-          ⚙️ ESP32-S3 Board
-                 ↓
-         📡 MQTT Broker Server
-                 ↓
-    ☁️ ThingsBoard Cloud Dashboard
-
++-----------------+ +------------------+ +-------------------+ +-----------------------------------+
+| 🌡️ DHT22 Sensor | ---> | ⚙️ ESP32-S3 Board | ---> | 📡 MQTT Broker | ---> | ☁️ ThingsBoard Cloud Dashboard |
++-----------------+ +------------------+ +-------------------+ +-----------------------------------+
 
 ---
 
