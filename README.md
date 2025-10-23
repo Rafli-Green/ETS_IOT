@@ -111,6 +111,8 @@ TROPHEUS berhasil dirancang dan diimplementasikan menggunakan **ESP32-S3**, **DH
 Sistem ini menjadi langkah awal menuju **Smart Campus ITS** yang mendukung kenyamanan belajar berbasis data.
 
 ---
+<img width="568" height="320" alt="image" src="https://github.com/user-attachments/assets/777c9961-2818-4c51-941d-cb2f142863cf" />
+
 
 ## 📦 Lisensi
 
